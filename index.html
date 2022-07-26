@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+        <script>
+            // TODO: Add code to check answers to questions
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <h3>Capital of Ukraine?</h3>
+                <div class="buttons-group">
+                    <div>
+                        <button id="01" class="btn-q1">6 people per 1 sheep</button>
+                    </div>
+                    <div>
+                        <button id="02" class="btn-q1">3 people per 1 sheep</button>
+                    </div>
+                    <div>
+                        <button id="03" class="btn-q1">1 people per 1 sheep</button>
+                    </div>
+                    <div>
+                        <button id="04" class="btn-q1">1 people per 3 sheep</button>
+                    </div>
+                    <div>
+                        <button id="05" class="btn-q1">1 people per 6 sheep</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr>
+                <h3>Capital of Ukraine?</h3>
+                <form>
+                    <div id="input-group">
+                        <input id="input" type='text'/>
+                        <button id="submit-btn">Check answer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function init(){
+                const buttons = document.getElementsByClassName('btn-q1');
+                for(let i=0; i < buttons.length; i++){
+                    buttons[i].onclick = onButtonClickHandler;
+                }
+                const submitButton = document.getElementById('submit-btn');
+                submitButton.onclick = onSubmitButtonHandler;
+            }
+
+            const view = {
+                setCorrectBtn: function (id) {
+                    const button = document.getElementById(id)
+                    button.setAttribute('class', 'correct');
+                },
+
+                setInorrectBtn: function (id) {
+                    const button = document.getElementById(id);
+                    button.setAttribute('class', 'incorrect');
+                },
+
+                addInfo: function(id, title) {
+                    const element = document.getElementById(id);
+                    const span = document.createElement("span");
+                    const spanText = document.createTextNode(title);
+                    span.appendChild(spanText);
+                    span.id = "span-"+ id;
+                    changeColorText(span, title);
+                    element.parentElement.appendChild(span);
+                },
+
+                changeInfoMessage: function(id,message) {
+                    const span = document.getElementById(id);
+                    span.innerHTML = message;
+                    changeColorText(span, message);
+                },
+
+                setIncorrectInput: function () {
+                    const input = document.getElementById('input');
+                    input.setAttribute('class', 'incorrect');
+                },
+
+                setCorrectInput: function () {
+                    const input = document.getElementById('input');
+                    input.setAttribute('class', 'correct');
+                },
+            }
+
+            const model = {
+                correctAnswerQ1: '01',
+                correctAnswerQ2: 'kyiv',
+            }
+
+            const controller = {
+                processQuestionOne: function (id, countOfChild) {
+                    const isAnswerCorrect = id === model.correctAnswerQ1;
+
+                    if(countOfChild >=2) {
+                        return null
+                    }
+
+                    if(isAnswerCorrect) {
+                        view.setCorrectBtn(id);
+                        view.addInfo(id, "Correct");
+                    } else {
+                        view.setInorrectBtn(id);
+                        view.addInfo(id, "Incorrect");
+                    }
+                },
+
+                processQuestionTwo: function (value, countOfChild) {
+                    const isAnswerCorrect = value.toLowerCase() === model.correctAnswerQ2;
+
+                    if(countOfChild >=2) {
+                        if(isAnswerCorrect) {
+                            view.setCorrectInput();
+                            view.changeInfoMessage("span-input-group", "Correct");
+                        } else {
+                            view.setIncorrectInput();
+                            view.changeInfoMessage("span-input-group", "Incorrect");
+                        }
+                        return null;
+                    }
+
+                    if(isAnswerCorrect) {
+                        view.setCorrectInput();
+                        view.addInfo("input-group", "Correct");
+                    } else {
+                        view.setIncorrectInput();
+                        view.addInfo("input-group", "Incorrect");
+                    }
+
+                }
+            }
+
+            function changeColorText (element, title) {
+                if(title === 'Correct') {
+                    element.setAttribute('class', 'correct-text');
+                } else if (title === 'Incorrect') {
+                    element.setAttribute('class', 'incorrect-text');
+                } else {
+                    element.setAttribute('class', 'primary');
+                }
+            }
+
+            function onButtonClickHandler (event) {
+                const buttonId = event.target.id;
+                const countOfChild = event.target.parentElement.childElementCount;
+                controller.processQuestionOne(buttonId, countOfChild)
+            }
+
+            function onSubmitButtonHandler(event) {
+                event.preventDefault();
+                const inputValue = document.getElementById('input').value;
+                const countOfChild = document.getElementById('input-group').parentElement.childElementCount;
+
+                controller.processQuestionTwo(inputValue, countOfChild);
+            }
+
+            window.onload = init
+        </script>
+    </body>
+</html>
